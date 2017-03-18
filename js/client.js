@@ -17,6 +17,10 @@ Client.askNewPlayer = function(){
     Client.socket.emit('newplayer');
 };
 
+Client.askThings = function() {
+    Client.socket.emit('loadthings');
+}
+
 // listen to newplayer message
 Client.socket.on('newplayer', function(data) {
 
@@ -46,6 +50,6 @@ Client.sendPosition = function(x, y) {
     Client.socket.emit('positionUpdate', {x:x, y:y})
 }
 
-Client.socket.on('movekey', function(data) {
+Client.socket.on('movedkey', function(data) {
     Game.movePlayerKeyboard(data.id, data.key)
 })

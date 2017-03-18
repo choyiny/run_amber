@@ -37,6 +37,7 @@ Game.preload = function() {
 
 Game.create = function(){
     Game.playerMap = {};
+    Game.teleporterMap = {};
     var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
     //testKey.onDown.add(Client.sendTest, this);
     var map = game.add.tilemap('map');
@@ -56,10 +57,9 @@ Game.create = function(){
     var layer = map.createLayer(0);
     layer.resizeWorld();
 
-    //secondlayer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
-    //secondlayer.events.onInputUp.add(Game.getCoordinates, this);
-
+    // request objects to be displayed clientside
     Client.askNewPlayer();
+    Client.askThings();
 
     // create cursors to move player
     cursors = {
@@ -69,6 +69,8 @@ Game.create = function(){
         d: Game.input.keyboard.addKey(Phaser.Keyboard.D)
     };
 
+    // zoom in the map, so not the whole maze is visible
+    Game.world.scale.set(2);
 };
 
 // Captures WASD keypresses and send presses to server
@@ -88,13 +90,23 @@ Game.update = function(){
 Game.addNewPlayer = function(id,x,y){
 
     // spawn the sprite of player and define player
-    Game.playerMap[id] = game.add.sprite(x,y,'sprite');
+    Game.playerMap[id] = game.add.sprite(x, y, 'sprite');
     player = Game.playerMap[id]
 
     // setup necessary physics to game
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.collideWorldBounds = true;
+
+    // setup camera to follow player
+    Game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+
 };
+
+// adds teleporters to dictionary
+Game.addNewTeleporter = function(id, x, y) {
+    // TODO: make teleporters actually work
+    //Game.teleporterMap[id] = game.add.sprite(x, y, 'teleporter');
+}
 
 // Removes the player from the dictionary
 Game.removePlayer = function(id){
@@ -102,6 +114,7 @@ Game.removePlayer = function(id){
     delete Game.playerMap[id];
 };
 
+// move according to player key presses
 Game.movePlayerKeyboard = function(id, key) {
     // get player
     var player = Game.playerMap[id];
@@ -121,5 +134,14 @@ Game.movePlayerKeyboard = function(id, key) {
     Client.sendPosition(player.x, player.y)
 };
 
+//Teleporting
+Game.teleportPlayer = function(id, destX, destY) {
 
+    var player = Game.playerMap[id];
 
+    player.x = destX
+    player.y = destY
+
+    // update position to server
+    Client.sendPosition(player.x, player.y)
+}

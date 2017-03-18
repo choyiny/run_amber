@@ -1,7 +1,7 @@
 {
     "name": "run-amber",
     "version": "0.1.0",
-    "description": "Hackathon Project - Hide and Seek Game",
+    "description": "Run Amber - A Hide and Seek Game (maybe?)",
     "private": true,
     "scripts": {
         "start": "node app.js"
