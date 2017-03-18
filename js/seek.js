@@ -30,6 +30,7 @@ Game.preload = function() {
 
     // load player sprite
     game.load.image('sprite','assets/sprites/sprite.png');
+    game.load.image('teleporter', 'assets/sprites/teleporter.png');
 };
 
 Game.create = function(){
@@ -39,8 +40,6 @@ Game.create = function(){
 
     Game.playerMap = {};
     Game.teleporterMap = {};
-    var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
-    //testKey.onDown.add(Client.sendTest, this);
     var map = game.add.tilemap('map');
 
     map.addTilesetImage('terrain_atlas', 'terraintiles');
@@ -72,8 +71,8 @@ Game.create = function(){
         d: Game.input.keyboard.addKey(Phaser.Keyboard.D)
     };
 
-    // zoom in the map, so not the whole maze is visible
-    // Game.world.scale.set(2);
+
+
 };
 
 // Captures WASD keypresses and send presses to server
@@ -100,26 +99,30 @@ Game.collidetest = function() {
 Adds a new player to the map, camera follow it
 and returns the player's sprite to control
  */
-Game.addNewPlayer = function(id,x,y){
-
+Game.addNewPlayer = function(id, x, y){
     // spawn the sprite of player and define player
     Game.playerMap[id] = game.add.sprite(x, y, 'sprite');
-    player = Game.playerMap[id]
+    player = Game.playerMap[id];
 
     // setup necessary physics to game
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.collideWorldBounds = true;
 
+    // top priority! (doesn't work)
+    // TODO: make it work
+    player.bringToTop()
+
     // setup camera to follow player
     Game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 1, 1);
+
 
     return player
 };
 
 // adds teleporters to dictionary
-Game.addNewTeleporter = function(id, x, y) {
-    // TODO: make teleporters actually work
-    //Game.teleporterMap[id] = game.add.sprite(x, y, 'teleporter');
+Game.addNewTeleporter = function(tpid, x, y) {
+    teleporter = Game.teleporterMap[tpid];
+    teleporter = game.add.sprite(x, y, 'teleporter');
 }
 
 // Removes the player from the dictionary
@@ -148,6 +151,11 @@ Game.movePlayerKeyboard = function(id, key) {
     // update position to server
     Client.sendPosition(player.x, player.y)
 };
+
+// Teleportations
+Game.teleporterCollied = function() {
+    console.log('teleporter collided')
+}
 
 //Teleporting
 Game.teleportPlayer = function(id, destX, destY) {
