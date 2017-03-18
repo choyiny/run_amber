@@ -39,3 +39,13 @@ Client.socket.on('remove', function(id) {
 Client.socket.on('moveplayer', function(id) {
 
 });
+
+// temp: sending click to server
+Client.sendClick = function(x, y) {
+    Client.socket.emit('click', {x:x, y:y});
+};
+
+// temp: handle move message from server
+Client.socket.on('move', function(data) {
+    Game.movePlayer(data.id, data.x, data.y);
+});

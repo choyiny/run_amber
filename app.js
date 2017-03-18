@@ -32,11 +32,29 @@ server.listen(8081, function(){
 // Keep track of the last id assigned to a new player
 server.lastPlayerID = 0;
 
-// function to create a player object
-function newPlayer(x, y, id) {
-    this.x = x;
-    this.y = y;
+// hider or seeker?
+server.seekerConnected = false;
+
+/*
+Creates a new player with id on server
+
+id: player's identity in game
+role: 0=seeker, 1=hider
+ */
+function newPlayer(id, x, y) {
+    // assign player an ID
     this.id = id;
+
+    // assign hider if seeker connected, seeker otherwise
+    if (server.seekerConnected) {
+        this.role = 1
+    } else {
+        this.role = 0
+        server.seekerConnected = true
+    }
+    // coordinates for player to spawn
+    this.x = x
+    this.y = y
 }
 
 // listen to the connection event - fired when player
@@ -47,7 +65,8 @@ io.on('connection', function(socket){
     socket.on('newplayer', function(){
 
         // create a new player object
-        socket.player = newPlayer(server.lastPlayerID++, randomInt(100, 400), randomInt(100,400))
+        // TEMP: set player location to (100, 100)
+        socket.player = newPlayer(server.lastPlayerID++, 100, 100);
 
         // get all players in map
         socket.emit('allplayers', getAllPlayers());
@@ -55,9 +74,22 @@ io.on('connection', function(socket){
         // send position to all players except for the players
         socket.broadcast.emit('newplayer', socket.player);
 
+        // on player click
+        socket.on('click', function(data) {
+            console.log('click to' + data.x  + ',' + data.y);
+            socket.player.x = data.x;
+            socket.player.y = data.y;
+            io.emit('move', socket.player);
+        });
+
         // on player disconnect
         socket.on('disconnect', function() {
             io.emit('remove', socket.player.id);
+
+            // if player is seeker
+            if (socket.player.role == 0) {
+                server.seekerConnected = false;
+            }
         });
     });
 });
