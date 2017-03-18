@@ -21,20 +21,20 @@ Game.preload = function() {
 };
 
 Game.create = function(){
-
-    //player map for keeping track of players
-    Game.playerMap= {};
-    var map = game.add.tilemap("map");
-    map.addTilesetImage("tilesheet", "tileset"); // tilesheet is the key of the tileset in map's JSON file
+    Game.playerMap = {};
+    var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+    //testKey.onDown.add(Client.sendTest, this);
+    var map = game.add.tilemap('map');
+    map.addTilesetImage('tilesheet', 'tileset'); // tilesheet is the key of the tileset in map's JSON file
     var layer;
     for(var i = 0; i < map.layers.length; i++) {
         layer = map.createLayer(i);
     }
-    layer.inputEnabled = true; // Allows clicking on the map
-    Client.askNewPlayer();
-
+    layer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
     layer.events.onInputUp.add(Game.getCoordinates, this);
-}
+    Client.askNewPlayer();
+};
+
 
 // adds player to dictionary
 Game.addNewPlayer = function(id,x,y){
