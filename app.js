@@ -1,6 +1,7 @@
 /**
  * Cho Yin Yong, Youyee Chen 2017
  * Hackathon Project - Something something
+ * Version 0.1.1
  */
 
 // express and socket imports
@@ -89,6 +90,7 @@ io.on('connection', function(socket){
 
         // on player disconnect
         socket.on('disconnect', function() {
+            console.log('player disconnected')
             io.emit('remove', socket.player.id);
 
             // if player is seeker
