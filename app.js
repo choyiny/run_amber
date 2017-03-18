@@ -36,42 +36,28 @@ server.lastPlayerID = 0;
 // hider or seeker?
 server.seekerConnected = false;
 
-/*
-Creates a new player with id on server
-
-id: player's identity in game
-role: 0=seeker, 1=hider
- */
-function newPlayer(id, x, y) {
-    // assign player an ID
-    this.id = id;
-
-    // assign hider if seeker connected, seeker otherwise
-    if (server.seekerConnected) {
-        this.role = 1
-    } else {
-        this.role = 0
-        server.seekerConnected = true
-    }
-    // coordinates for player to spawn
-    this.x = x
-    this.y = y
-}
-
 // listen to the connection event - fired when player
 // connects to server using io.connect()
 io.on('connection', function(socket){
 
     // callback to react to 'newplayer' message
     socket.on('newplayer', function(){
+        if (!server.seekerConnected) {
+            playerRole = 1
+            server.seekerConnected = true;
+            console.log("seeker connected")
+        } else {
+            playerRole = 0
+            console.log("hider connected")
+        }
 
         // create a new player object
-        // TEMP: set player location to (100, 100)
-        //socket.player = newPlayer(server.lastPlayerID++, 100, 100);
+        // role: 1- seeker, 0- hider
         socket.player = {
             id: server.lastPlayerID++,
             x: 300,
-            y: 200
+            y: 200,
+            role: playerRole
         }
 
         // get all players in map
@@ -80,7 +66,7 @@ io.on('connection', function(socket){
         // send position to all players except for the players
         socket.broadcast.emit('newplayer', socket.player);
 
-        // on player click
+        // listens to player clicks
         socket.on('click', function(data) {
             console.log('click to' + data.x  + ',' + data.y);
             socket.player.x = data.x;
@@ -88,14 +74,22 @@ io.on('connection', function(socket){
             io.emit('move', socket.player);
         });
 
+
+        socket.on('keypress', function(data) {
+            socket.player.key = data.key
+            io.emit('movekey', socket.player)
+        })
+
         // on player disconnect
         socket.on('disconnect', function() {
-            console.log('player disconnected')
             io.emit('remove', socket.player.id);
 
             // if player is seeker
-            if (socket.player.role == 0) {
+            if (socket.player.role == 1) {
+                console.log("seeker disconnected")
                 server.seekerConnected = false;
+            } else {
+                console.log("hider disconnected")
             }
         });
     });
@@ -117,6 +111,7 @@ function getAllPlayers(){
     });
     return players;
 }
+
 
 function randomInt (low, high) {
     return Math.floor(Math.random() * (high - low) + low);

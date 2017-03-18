@@ -19,10 +19,8 @@ Game.init = function(){
 Game.preload = function() {
 
     // load location and image of the tiles
-    game.load.tilemap('map', 'assets/map/basemap.json', null, Phaser.Tilemap.TILED_JSON);
-    //game.load.spritesheet('tileset', 'assets/map/tilesheet.png',32,32);
-    game.load.spritesheet('walltiles', 'assets/map/tiles/Objects/Wall.png',16,16);
-    game.load.spritesheet('floortiles', 'assets/map/tiles/Objects/Floor.png',16,16);
+    game.load.tilemap('map', 'assets/map/example_map.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.spritesheet('tileset', 'assets/map/tilesheet.png',32,32);
 
     // load player sprite
     game.load.image('sprite','assets/sprites/sprite.png');
@@ -33,22 +31,13 @@ Game.create = function(){
     var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
     //testKey.onDown.add(Client.sendTest, this);
     var map = game.add.tilemap('map');
-
-    //map.addTilesetImage('tilesheet', 'tileset'); // tilesheet is the key of the tileset in map's JSON file
-    map.addTilesetImage('Wall', 'walltiles');
-    map.addTilesetImage('Floor', 'floortiles');
-    /*var layer;
-    *for(var i = 0; i < map.layers.length; i++) {
-    *   layer = map.createLayer(i);
-    }*/
-
-    var underground = map.createLayer("Underground");
-    var groundlayer = map.createLayer("Ground layer");
-    var secondlayer = map.createLayer("Second layer");
-
-    secondlayer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
-    secondlayer.events.onInputUp.add(Game.getCoordinates, this);
-
+    map.addTilesetImage('tilesheet', 'tileset'); // tilesheet is the key of the tileset in map's JSON file
+    var layer;
+    for(var i = 0; i < map.layers.length; i++) {
+        layer = map.createLayer(i);
+    }
+    layer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
+    // layer.events.onInputUp.add(Game.getCoordinates, this);
     Client.askNewPlayer();
 
     // create cursors to move player
