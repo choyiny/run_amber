@@ -53,7 +53,7 @@ Game.create = function(){
 
     //Change the world size to match the size of this layer
     this.collisionLayer.resizeWorld();
-    
+
     // request objects to be displayed clientside
     // create new player object
     player = Client.askNewPlayer();
