@@ -57,13 +57,8 @@ Game.create = function(){
     //Change the world size to match the size of this layer
     this.collisionLayer.resizeWorld();
 
-<<<<<<< Updated upstream
-    // request objects to be displayed clientside
-    this.newPlayer = Client.askNewPlayer();
-=======
     // request objects and self sprite to be displayed clientside
     newPlayer = Client.askNewPlayer();
->>>>>>> Stashed changes
     Client.askThings();
 
     // collision
@@ -90,14 +85,9 @@ Game.update = function(){
         Client.sendPress('d');
     }
 
-<<<<<<< Updated upstream
     //Make the sprite collide with the collision layer
     game.physics.arcade.collide(this.newPlayer, this.collisionLayer);
-=======
 
-
->>>>>>> Stashed changes
-};
 
 Game.collidetest = function() {
     console.log("hello world");
