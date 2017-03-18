@@ -26,3 +26,52 @@ app.get('/',function(req, res){
 server.listen(8081, function(){
     console.log('Listening on ' + server.address().port);
 });
+
+// Server code
+
+// Keep track of the last id assigned to a new player
+server.lastPlayerID = 0;
+
+// Keep track if the seeker is connected
+server.seekerConnected = true;
+
+// listen to the connection event - fired when player
+// connects to server using io.connect()
+io.on('connection', function(socket){
+
+    // callback to react to 'newplayer' message
+    socket.on('newplayer', function(){
+        // create a new player object
+        socket.player = {
+            id: server.lastPlayerID++,
+            x: randomInt(100, 400),
+            y: randomInt(100, 400)
+        };
+        // send position to all players
+        socket.emit('allplayers', getAllPlayers());
+
+        // send position to all players except for the players
+        socket.broadcast.emit('newplayer',socket.player);
+    });
+});
+
+/*
+returns array of connected players
+ */
+function getAllPlayers(){
+
+    // dummy variable to store players
+    var players = [];
+    // get keys to players connected
+    Object.keys(io.sockets.connected).forEach(function(socketID){
+        var player = io.sockets.connected[socketID].player;
+
+        // put player to array
+        if(player) players.push(player);
+    });
+    return players;
+}
+
+function randomInt (low, high) {
+    return Math.floor(Math.random() * (high - low) + low);
+}
