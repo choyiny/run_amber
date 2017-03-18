@@ -42,14 +42,22 @@ io.on('connection', function(socket){
 
     // callback to react to 'newplayer' message
     socket.on('newplayer', function(){
-        console.log('player connected')
+        if (!server.seekerConnected) {
+            playerRole = 1
+            server.seekerConnected = true;
+            console.log("seeker connected")
+        } else {
+            playerRole = 0
+            console.log("hider connected")
+        }
+
         // create a new player object
-        // TEMP: set player location to (100, 100)
-        //socket.player = newPlayer(server.lastPlayerID++, 100, 100);
+        // role: 1- seeker, 0- hider
         socket.player = {
             id: server.lastPlayerID++,
             x: 300,
-            y: 200
+            y: 200,
+            role: playerRole
         }
 
         // get all players in map
@@ -74,12 +82,14 @@ io.on('connection', function(socket){
 
         // on player disconnect
         socket.on('disconnect', function() {
-            console.log('player disconnected')
             io.emit('remove', socket.player.id);
 
             // if player is seeker
-            if (socket.player.role == 0) {
+            if (socket.player.role == 1) {
+                console.log("seeker disconnected")
                 server.seekerConnected = false;
+            } else {
+                console.log("hider disconnected")
             }
         });
     });

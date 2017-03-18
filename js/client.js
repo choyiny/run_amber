@@ -19,6 +19,7 @@ Client.askNewPlayer = function(){
 
 // listen to newplayer message
 Client.socket.on('newplayer', function(data) {
+
     // add new player to the map
     Game.addNewPlayer(data.id, data.x, data.y);
 });
@@ -35,19 +36,9 @@ Client.socket.on('remove', function(id) {
     Game.removePlayer(id);
 });
 
-// temp: sending click to server
-Client.sendClick = function(x, y) {
-    Client.socket.emit('click', {x:x, y:y});
-};
-
 Client.sendPress = function(key) {
     Client.socket.emit('keypress', {key:key})
 }
-
-// temp: handle move message from server
-Client.socket.on('move', function(data) {
-    Game.movePlayer(data.id, data.x, data.y);
-});
 
 Client.socket.on('movekey', function(data) {
     Game.movePlayerKeyboard(data.id, data.key)

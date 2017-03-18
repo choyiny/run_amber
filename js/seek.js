@@ -5,7 +5,8 @@
 var Game = {};
 
 // global constants
-var speed = 5;
+var HIDER_SPEED = 2;
+var SEEKER_SPEED = 3;
 var cursors;
 
 
@@ -49,9 +50,8 @@ Game.create = function(){
 
 };
 
-// Captures WASD keypresses
+// Captures WASD keypresses and send presses to server
 Game.update = function(){
-
     if (cursors.w.isDown) {
         Client.sendPress('w');
     } else if (cursors.a.isDown) {
@@ -74,31 +74,16 @@ Game.removePlayer = function(id){
     delete Game.playerMap[id];
 };
 
-// get coordinates of player
-Game.getCoordinates = function(layer, pointer) {
-    Client.sendClick(pointer.worldX, pointer.worldY)
-};
-
-// temp: move player
-Game.movePlayer = function(id, x, y) {
-    var player = Game.playerMap[id];
-    var distance = Phaser.Math.distance(player.x, player.y, x, y)
-    var duration = distance * 10
-    var tween = game.add.tween(player);
-    tween.to({x:x, y:y}, duration);
-    tween.start();
-}
-
 Game.movePlayerKeyboard = function(id, key) {
     var player = Game.playerMap[id];
     if (key == 'w') {
-        player.y -= speed;
+        player.y -= HIDER_SPEED;
     } else if (key == 'a') {
-        player.x -= speed;
+        player.x -= HIDER_SPEED;
     } else if (key == 's') {
-        player.y += speed;
+        player.y += HIDER_SPEED;
     } else if (key == 'd') {
-        player.x += speed;
+        player.x += HIDER_SPEED;
     }
 };
 
