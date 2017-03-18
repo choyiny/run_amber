@@ -22,9 +22,9 @@ Game.preload = function() {
 
 Game.create = function(){
     //player map for keeping track of players
-    Game.playerMap= {}
+    Game.playerMap= {};
     var map = game.add.tilemap("map");
-    map.addTilesetImage("tilesheet", "tileset") // tilesheet is the key of the tileset in map's JSON file
+    map.addTilesetImage("tilesheet", "tileset"); // tilesheet is the key of the tileset in map's JSON file
     var layer;
     for(var i = 0; i < map.layers.length; i++) {
         layer = map.createLayer(i);

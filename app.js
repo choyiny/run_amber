@@ -32,8 +32,12 @@ server.listen(8081, function(){
 // Keep track of the last id assigned to a new player
 server.lastPlayerID = 0;
 
-// Keep track if the seeker is connected
-server.seekerConnected = true;
+// function to create a player object
+function newPlayer(x, y, id) {
+    this.x = x;
+    this.y = y;
+    this.id = id;
+}
 
 // listen to the connection event - fired when player
 // connects to server using io.connect()
@@ -41,17 +45,20 @@ io.on('connection', function(socket){
 
     // callback to react to 'newplayer' message
     socket.on('newplayer', function(){
+
         // create a new player object
-        socket.player = {
-            id: server.lastPlayerID++,
-            x: randomInt(100, 400),
-            y: randomInt(100, 400)
-        };
-        // send position to all players
+        socket.player = newPlayer(server.lastPlayerID++, randomInt(100, 400), randomInt(100,400))
+
+        // get all players in map
         socket.emit('allplayers', getAllPlayers());
 
         // send position to all players except for the players
-        socket.broadcast.emit('newplayer',socket.player);
+        socket.broadcast.emit('newplayer', socket.player);
+
+        // on player disconnect
+        socket.on('disconnect', function() {
+            io.emit('remove', socket.player.id);
+        });
     });
 });
 
