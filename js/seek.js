@@ -25,11 +25,9 @@ Game.init = function(){
 Game.preload = function() {
 
     // load location and image of the tiles
-    game.load.tilemap("map", "assets/map/testmap.json");
-    //game.load.tilemap('map', 'assets/map/basemap.json');
+    game.load.tilemap("map", "assets/map/testmap.json", null, Phaser.Tilemap.TILED_JSON);
     //game.load.spritesheet('tileset', 'assets/map/tilesheet.png',32,32);
     game.load.spritesheet('terraintiles', 'assets/map/terrain_atlas.png',32,32);
-    //game.load.spritesheet('treetiles', 'assets/map/tiles/Objects/Tree0.png',16,16);
 
     // load player sprite
     game.load.image('sprite','assets/sprites/sprite.png');
@@ -37,27 +35,21 @@ Game.preload = function() {
 
 Game.create = function(){
     Game.playerMap = {};
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
     var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
     //testKey.onDown.add(Client.sendTest, this);
     var map = game.add.tilemap('map');
 
     //map.addTilesetImage('tilesheet', 'tileset'); // tilesheet is the key of the tileset in map's JSON file
     map.addTilesetImage('terrain_atlas', 'terraintiles');
-    //map.addTilesetImage('Floor', 'floortiles');
-    /*var layer;
-    *for(var i = 0; i < map.layers.length; i++) {
-    *   layer = map.createLayer(i);
-    }*/
-
-    //map.createLayer("Underground");
-    //map.createLayer("Ground layer");
-    //map.createLayer("Second layer");
 
     var layer = map.createLayer(0);
+    var layer2 = map.createLayer(1);
+    map.setCollisionBetween(1, 995);
+
     layer.resizeWorld();
 
-    //secondlayer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
-    //secondlayer.events.onInputUp.add(Game.getCoordinates, this);
 
     Client.askNewPlayer();
 
