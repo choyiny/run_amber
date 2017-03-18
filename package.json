@@ -1,13 +1,14 @@
 {
-    "name": "Run Amber",
+    "name": "run-amber",
     "version": "0.1.0",
-    "description": "Hackathon Project - Hide and Seek Game"
+    "description": "Hackathon Project - Hide and Seek Game",
     "private": true,
     "scripts": {
         "start": "node app.js"
     },
     "dependencies": {
         "express": "~4.14.0",
-        "socket.io": "^1.7.3"
+        "socket.io": "^1.7.3",
+        "phaser-ce": "2.7.3"
     }
 }
