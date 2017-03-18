@@ -49,16 +49,15 @@ Game.create = function(){
     this.collisionLayer = map.createLayer(1);
 
     // allow sprite to collide with tiles in the collision layer
-    //game.physics.arcade.collide(sprite, collision);
-    map.setCollisionBetween(995, 995, true, this.collisionLayer);
-
-    this.collisionLayer.debug = true;
+    map.setCollisionBetween(1, 1000, true, this.collisionLayer);
 
     //Change the world size to match the size of this layer
     this.collisionLayer.resizeWorld();
 
     // request objects to be displayed clientside
-    this.newPlayer = Client.askNewPlayer();
+    // create new player object
+    player = Client.askNewPlayer();
+
     Client.askThings();
 
     // collision
@@ -88,7 +87,8 @@ Game.update = function(){
     }
 
     //Make the sprite collide with the collision layer
-    game.physics.arcade.collide(this.newPlayer, this.collisionLayer);
+    //checks in realtime
+    game.physics.arcade.collide(player, this.collisionLayer);
 };
 
 Game.collidetest = function() {
@@ -104,8 +104,8 @@ Game.addNewPlayer = function(id, x, y){
     Game.playerMap[id] = game.add.sprite(x, y, 'sprite');
     player = Game.playerMap[id];
 
-    // setup necessary physics to game
-    game.physics.enable(player, Phaser.Physics.ARCADE);
+    // enable physics for player
+    game.physics.enable(player);
     player.body.collideWorldBounds = true;
 
     // top priority! (doesn't work)
@@ -114,7 +114,6 @@ Game.addNewPlayer = function(id, x, y){
 
     // setup camera to follow player
     Game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 1, 1);
-
 
     return player
 };
