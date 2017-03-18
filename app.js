@@ -42,7 +42,7 @@ server.seekerConnected = false;
  type 1: ???
 */
 server.things = [{id: 0, x: 100, y: 100, destX:200, destY:300, type:0},
-                 {id: 1, x:300, y:400, destX:300, destY:300, type:0}]
+                 {id: 1, x:500, y:50, destX:400, destY:500, type:0}]
 ;
 
 // listen to the connection event - fired when player
