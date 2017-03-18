@@ -66,7 +66,12 @@ io.on('connection', function(socket){
 
         // create a new player object
         // TEMP: set player location to (100, 100)
-        socket.player = newPlayer(server.lastPlayerID++, 100, 100);
+        //socket.player = newPlayer(server.lastPlayerID++, 100, 100);
+        socket.player = {
+            id: server.lastPlayerID++,
+            x: 300,
+            y: 200
+        }
 
         // get all players in map
         socket.emit('allplayers', getAllPlayers());
