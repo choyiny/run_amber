@@ -66,19 +66,17 @@ io.on('connection', function(socket){
         // send position to all players except for the players
         socket.broadcast.emit('newplayer', socket.player);
 
-        // listens to player clicks
-        socket.on('click', function(data) {
-            console.log('click to' + data.x  + ',' + data.y);
-            socket.player.x = data.x;
-            socket.player.y = data.y;
-            io.emit('move', socket.player);
-        });
-
-
+        // listens to player keypress
         socket.on('keypress', function(data) {
             socket.player.key = data.key
             io.emit('movekey', socket.player)
-        })
+        });
+        // attempt to update position (fixes bug)
+        // however this doesn't work
+        socket.on('positionUpdate', function(data) {
+            socket.player.x = data.x;
+            socket.player.y = data.y;
+        });
 
         // on player disconnect
         socket.on('disconnect', function() {

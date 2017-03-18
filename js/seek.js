@@ -46,8 +46,8 @@ Game.create = function(){
     var groundlayer = map.createLayer("Ground layer");
     var secondlayer = map.createLayer("Second layer");
 
-    secondlayer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
-    secondlayer.events.onInputUp.add(Game.getCoordinates, this);
+    //secondlayer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
+    //secondlayer.events.onInputUp.add(Game.getCoordinates, this);
 
     Client.askNewPlayer();
 
