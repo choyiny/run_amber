@@ -35,12 +35,21 @@ server.listen(8081, function(){
 // server variables
 server.lastPlayerID = 0;
 server.seekerConnected = false;
-server.tpIDToCoordinates = {};
 
+/*
+ define the locations of things on the map
+ type 0: teleporter
+ type 1: ???
+*/
+server.things = [{id: 0, x: 100, y: 100, destX:200, destY:300, type:0},
+                 {id: 1, x:300, y:400, destX:300, destY:300, type:0}]
+;
 
 // listen to the connection event - fired when player
 // connects to server using io.connect()
 io.on('connection', function(socket){
+
+
 
     // callback to react to 'newplayer' message
     socket.on('newplayer', function(){
@@ -64,10 +73,12 @@ io.on('connection', function(socket){
 
         // get all players in map
         socket.emit('allplayers', getAllPlayers());
-        socket.emit('allobjects', getThings());
 
         // send position to all players except for the players
         socket.broadcast.emit('newplayer', socket.player);
+
+        // load teleporters and things
+        socket.emit('loadthings', server.things)
 
         // listens to player keypress
         socket.on('keypress', function(data) {
@@ -83,11 +94,10 @@ io.on('connection', function(socket){
 
         // when player wants to teleport
         // TODO: check if it works
-        socket.on('wantToTeleport', function(data, teleporterID) {
-            var destX, destY;
-            destX = server.tpIDToCoordinates[teleporterID][0]
-            destY = server.tpIDToCoordinates[teleporterID][1]
-            io.emit('teleportPlayer', destX, destY)
+        socket.on('wantToTeleport', function(data) {
+            // TOOO: make it work
+
+            //io.emit('teleportPlayer', data.id)
         });
 
 
@@ -138,13 +148,6 @@ function getSeeker() {
             return player
         }
     });
-}
-
-/*
-Returns all the objects in the arena: teleporters, doors, etc.
- */
-function getThings() {
-
 }
 
 
