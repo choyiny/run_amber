@@ -53,7 +53,7 @@ Game.create = function(){
 
     //Change the world size to match the size of this layer
     this.collisionLayer.resizeWorld();
-
+    
     // request objects to be displayed clientside
     // create new player object
     player = Client.askNewPlayer();
@@ -69,8 +69,6 @@ Game.create = function(){
         s: Game.input.keyboard.addKey(Phaser.Keyboard.S),
         d: Game.input.keyboard.addKey(Phaser.Keyboard.D)
     };
-
-
 
 };
 
@@ -120,8 +118,9 @@ Game.addNewPlayer = function(id, x, y){
 
 // adds teleporters to dictionary
 Game.addNewTeleporter = function(tpid, x, y) {
-    teleporter = Game.teleporterMap[tpid];
+    var teleporter = Game.teleporterMap[tpid];
     teleporter = game.add.sprite(x, y, 'teleporter');
+
 }
 
 // Removes the player from the dictionary
