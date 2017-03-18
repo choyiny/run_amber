@@ -26,7 +26,6 @@ Game.preload = function() {
 
     // load location and image of the tiles
     game.load.tilemap("map", "assets/map/testmap.json", null, Phaser.Tilemap.TILED_JSON);
-    //game.load.spritesheet('tileset', 'assets/map/tilesheet.png',32,32);
     game.load.spritesheet('terraintiles', 'assets/map/terrain_atlas.png',32,32);
 
     // load player sprite
@@ -35,25 +34,32 @@ Game.preload = function() {
 
 Game.create = function(){
 
+    // start physics system for collision
+    Game.physics.startSystem(Phaser.Physics.ARCADE);
+
     Game.playerMap = {};
     Game.teleporterMap = {};
     var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
     //testKey.onDown.add(Client.sendTest, this);
     var map = game.add.tilemap('map');
 
-    // start physics system for collision
-    Game.physics.startSystem(Phaser.Physics.ARCADE);
-
-    //map.addTilesetImage('tilesheet', 'tileset'); // tilesheet is the key of the tileset in map's JSON file
     map.addTilesetImage('terrain_atlas', 'terraintiles');
 
-    var layer = map.createLayer(0);
-    var layer2 = map.createLayer(1);
+    // create map layers
+    this.groundLayer = map.createLayer(0);
+    this.collisionLayer = map.createLayer(1);
 
-    layer.resizeWorld();
+    // allow sprite to collide with tiles in the collision layer
+    //game.physics.arcade.collide(sprite, collision);
+    map.setCollisionBetween(995, 995, true, this.collisionLayer);
+
+    this.collisionLayer.debug = true;
+
+    //Change the world size to match the size of this layer
+    this.collisionLayer.resizeWorld();
 
     // request objects to be displayed clientside
-    newPlayer = Client.askNewPlayer();
+    this.newPlayer = Client.askNewPlayer();
     Client.askThings();
 
     // collision
@@ -81,7 +87,14 @@ Game.update = function(){
     } else if (cursors.d.isDown) {
         Client.sendPress('d');
     }
+
+    //Make the sprite collide with the collision layer
+    game.physics.arcade.collide(this.newPlayer, this.collisionLayer);
 };
+
+Game.collidetest = function() {
+    console.log("hello world");
+}
 
 /*
 Adds a new player to the map, camera follow it
@@ -119,16 +132,17 @@ Game.removePlayer = function(id){
 Game.movePlayerKeyboard = function(id, key) {
     // get player
     var player = Game.playerMap[id];
+    game.physics.enable(player);
 
     // move player according to keypress
     if (key == 'w') {
-        player.y -= HIDER_SPEED;
+        player.body.velocity.y -= HIDER_SPEED;
     } else if (key == 'a') {
-        player.x -= HIDER_SPEED;
+        player.body.velocity.x -= HIDER_SPEED;
     } else if (key == 's') {
-        player.y += HIDER_SPEED;
+        player.body.velocity.y += HIDER_SPEED;
     } else if (key == 'd') {
-        player.x += HIDER_SPEED;
+        player.body.velocity.x += HIDER_SPEED;
     }
 
     // update position to server
@@ -146,3 +160,4 @@ Game.teleportPlayer = function(id, destX, destY) {
     // update position to server
     Client.sendPosition(player.x, player.y)
 }
+
