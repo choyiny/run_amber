@@ -16,6 +16,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
 
+// resources to load to webserver
 app.use('/css',express.static(__dirname + '/css'));
 app.use('/js',express.static(__dirname + '/js'));
 app.use('/assets',express.static(__dirname + '/assets'));
@@ -25,22 +26,17 @@ app.get('/',function(req, res){
     res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/',function(req, res){
-    res.sendFile(__dirname + '/index.html');
-});
-
 // listen on port 8081
 server.listen(8081, function(){
-    console.log('Listening on ' + server.address().port);
+    console.log('Server open on port ' + server.address().port);
 });
 
-// Server code
 
-// Keep track of the last id assigned to a new player
+// server variables
 server.lastPlayerID = 0;
-
-// hider or seeker?
 server.seekerConnected = false;
+server.tpIDToCoordinates = {};
+
 
 // listen to the connection event - fired when player
 // connects to server using io.connect()
@@ -64,10 +60,11 @@ io.on('connection', function(socket){
             x: 300,
             y: 200,
             role: playerRole
-        }
+        };
 
         // get all players in map
         socket.emit('allplayers', getAllPlayers());
+        socket.emit('allobjects', getThings());
 
         // send position to all players except for the players
         socket.broadcast.emit('newplayer', socket.player);
@@ -75,13 +72,22 @@ io.on('connection', function(socket){
         // listens to player keypress
         socket.on('keypress', function(data) {
             socket.player.key = data.key
-            io.emit('movekey', socket.player)
+            io.emit('movedkey', socket.player)
         });
 
         // update position of player on server
         socket.on('positionUpdate', function(data) {
             socket.player.x = data.x;
             socket.player.y = data.y;
+        });
+
+        // when player wants to teleport
+        // TODO: check if it works
+        socket.on('wantToTeleport', function(data, teleporterID) {
+            var destX, destY;
+            destX = server.tpIDToCoordinates[teleporterID][0]
+            destY = server.tpIDToCoordinates[teleporterID][1]
+            io.emit('teleportPlayer', destX, destY)
         });
 
 
@@ -98,6 +104,8 @@ io.on('connection', function(socket){
             }
         });
     });
+
+    //socket.on('player')
 });
 
 /*
@@ -115,6 +123,28 @@ function getAllPlayers(){
         if(player) players.push(player);
     });
     return players;
+}
+
+/*
+returns the player which is a seeker
+ */
+function getSeeker() {
+    // loop through all players
+    Object.keys(io.sockets.connected).forEach(function(socketID) {
+        var player = io.sockets.connected[socketID].player;
+
+        // if player's role is seeker, return the player
+        if ((player) && (player.role == 1)) {
+            return player
+        }
+    });
+}
+
+/*
+Returns all the objects in the arena: teleporters, doors, etc.
+ */
+function getThings() {
+
 }
 
 
