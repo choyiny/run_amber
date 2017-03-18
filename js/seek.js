@@ -34,12 +34,14 @@ Game.preload = function() {
 };
 
 Game.create = function(){
+
     Game.playerMap = {};
     Game.teleporterMap = {};
     var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
     //testKey.onDown.add(Client.sendTest, this);
     var map = game.add.tilemap('map');
 
+    // start physics system for collision
     Game.physics.startSystem(Phaser.Physics.ARCADE);
 
     //map.addTilesetImage('tilesheet', 'tileset'); // tilesheet is the key of the tileset in map's JSON file
@@ -47,13 +49,14 @@ Game.create = function(){
 
     var layer = map.createLayer(0);
     var layer2 = map.createLayer(1);
-    map.setCollisionBetween(1, 995);
 
     layer.resizeWorld();
 
     // request objects to be displayed clientside
-    Client.askNewPlayer();
+    newPlayer = Client.askNewPlayer();
     Client.askThings();
+
+    // collision
 
     // create cursors to move player
     cursors = {
@@ -64,7 +67,7 @@ Game.create = function(){
     };
 
     // zoom in the map, so not the whole maze is visible
-    Game.world.scale.set(2);
+    // Game.world.scale.set(2);
 };
 
 // Captures WASD keypresses and send presses to server
@@ -80,7 +83,10 @@ Game.update = function(){
     }
 };
 
-// adds player to dictionary
+/*
+Adds a new player to the map, camera follow it
+and returns the player's sprite to control
+ */
 Game.addNewPlayer = function(id,x,y){
 
     // spawn the sprite of player and define player
@@ -92,8 +98,9 @@ Game.addNewPlayer = function(id,x,y){
     player.body.collideWorldBounds = true;
 
     // setup camera to follow player
-    Game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+    Game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 1, 1);
 
+    return player
 };
 
 // adds teleporters to dictionary
