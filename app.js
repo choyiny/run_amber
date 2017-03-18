@@ -36,35 +36,13 @@ server.lastPlayerID = 0;
 // hider or seeker?
 server.seekerConnected = false;
 
-/*
-Creates a new player with id on server
-
-id: player's identity in game
-role: 0=seeker, 1=hider
- */
-function newPlayer(id, x, y) {
-    // assign player an ID
-    this.id = id;
-
-    // assign hider if seeker connected, seeker otherwise
-    if (server.seekerConnected) {
-        this.role = 1
-    } else {
-        this.role = 0
-        server.seekerConnected = true
-    }
-    // coordinates for player to spawn
-    this.x = x
-    this.y = y
-}
-
 // listen to the connection event - fired when player
 // connects to server using io.connect()
 io.on('connection', function(socket){
 
     // callback to react to 'newplayer' message
     socket.on('newplayer', function(){
-
+        console.log('player connected')
         // create a new player object
         // TEMP: set player location to (100, 100)
         //socket.player = newPlayer(server.lastPlayerID++, 100, 100);
@@ -80,13 +58,19 @@ io.on('connection', function(socket){
         // send position to all players except for the players
         socket.broadcast.emit('newplayer', socket.player);
 
-        // on player click
+        // listens to player clicks
         socket.on('click', function(data) {
             console.log('click to' + data.x  + ',' + data.y);
             socket.player.x = data.x;
             socket.player.y = data.y;
             io.emit('move', socket.player);
         });
+
+
+        socket.on('keypress', function(data) {
+            socket.player.key = data.key
+            io.emit('movekey', socket.player)
+        })
 
         // on player disconnect
         socket.on('disconnect', function() {
@@ -117,6 +101,7 @@ function getAllPlayers(){
     });
     return players;
 }
+
 
 function randomInt (low, high) {
     return Math.floor(Math.random() * (high - low) + low);

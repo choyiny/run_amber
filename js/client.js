@@ -35,17 +35,20 @@ Client.socket.on('remove', function(id) {
     Game.removePlayer(id);
 });
 
-// moving the player
-Client.socket.on('moveplayer', function(id) {
-
-});
-
 // temp: sending click to server
 Client.sendClick = function(x, y) {
     Client.socket.emit('click', {x:x, y:y});
 };
 
+Client.sendPress = function(key) {
+    Client.socket.emit('keypress', {key:key})
+}
+
 // temp: handle move message from server
 Client.socket.on('move', function(data) {
     Game.movePlayer(data.id, data.x, data.y);
 });
+
+Client.socket.on('movekey', function(data) {
+    Game.movePlayerKeyboard(data.id, data.key)
+})
