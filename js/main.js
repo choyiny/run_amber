@@ -1,5 +1,11 @@
 /**
- * Created by choyiny on 17/3/2017.
+ * Cho Yin Yong, Youyee Chen 2017
+ * RUN AMBER - A Game of Hide and Seek (maybe)
+ * Made with <3 for RUHacks 2017
+ * Version 0.1.1
+ *
+ * Main
+ *
  */
 
 // Initializes game in browser

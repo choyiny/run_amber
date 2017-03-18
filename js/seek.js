@@ -1,5 +1,11 @@
 /**
- * Created by choyiny on 17/3/2017.
+ * Cho Yin Yong, Youyee Chen 2017
+ * RUN AMBER - A Game of Hide and Seek (maybe)
+ * Made with <3 for RUHacks 2017
+ * Version 0.1.1
+ *
+ * Game Code
+ *
  */
 
 var Game = {};
@@ -60,7 +66,7 @@ Game.create = function(){
         w: Game.input.keyboard.addKey(Phaser.Keyboard.W),
         a: Game.input.keyboard.addKey(Phaser.Keyboard.A),
         s: Game.input.keyboard.addKey(Phaser.Keyboard.S),
-        d: Game.input.keyboard.addKey(Phaser.Keyboard.D),
+        d: Game.input.keyboard.addKey(Phaser.Keyboard.D)
     };
 
 };
@@ -80,7 +86,14 @@ Game.update = function(){
 
 // adds player to dictionary
 Game.addNewPlayer = function(id,x,y){
+
+    // spawn the sprite of player and define player
     Game.playerMap[id] = game.add.sprite(x,y,'sprite');
+    player = Game.playerMap[id]
+
+    // setup necessary physics to game
+    game.physics.enable(player, Phaser.Physics.ARCADE);
+    player.body.collideWorldBounds = true;
 };
 
 // Removes the player from the dictionary
@@ -90,7 +103,10 @@ Game.removePlayer = function(id){
 };
 
 Game.movePlayerKeyboard = function(id, key) {
+    // get player
     var player = Game.playerMap[id];
+
+    // move player according to keypress
     if (key == 'w') {
         player.y -= HIDER_SPEED;
     } else if (key == 'a') {
@@ -100,6 +116,10 @@ Game.movePlayerKeyboard = function(id, key) {
     } else if (key == 'd') {
         player.x += HIDER_SPEED;
     }
+
+    // update position to server
+    Client.sendPosition(player.x, player.y)
 };
+
 
 

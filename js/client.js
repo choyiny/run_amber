@@ -1,10 +1,10 @@
 /**
  * Cho Yin Yong, Youyee Chen 2017
- * RUHacks Hackathon Project
+ * RUN AMBER - A Game of Hide and Seek (maybe)
+ * Made with <3 for RUHacks 2017
+ * Version 0.1.1
  *
  * Game Client
- * - askNewPlayer (emits newplayer)
- * -
  *
  */
 
@@ -36,8 +36,14 @@ Client.socket.on('remove', function(id) {
     Game.removePlayer(id);
 });
 
+// send client keypress to server
 Client.sendPress = function(key) {
     Client.socket.emit('keypress', {key:key})
+}
+
+// send position
+Client.sendPosition = function(x, y) {
+    Client.socket.emit('positionUpdate', {x:x, y:y})
 }
 
 Client.socket.on('movekey', function(data) {

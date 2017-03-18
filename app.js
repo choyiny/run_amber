@@ -1,7 +1,13 @@
 /**
  * Cho Yin Yong, Youyee Chen 2017
- * Hackathon Project - Something something
+ * RUN AMBER - A Game of Hide and Seek (maybe)
+ * Made with <3 for RUHacks 2017
  * Version 0.1.1
+ *
+ * Server:
+ * - Listens to keypresses, position updates
+ * - Listens to new player connections and disconnections.
+ * - Broadcasts all players location
  */
 
 // express and socket imports
@@ -71,12 +77,13 @@ io.on('connection', function(socket){
             socket.player.key = data.key
             io.emit('movekey', socket.player)
         });
-        // attempt to update position (fixes bug)
-        // however this doesn't work
+
+        // update position of player on server
         socket.on('positionUpdate', function(data) {
             socket.player.x = data.x;
             socket.player.y = data.y;
         });
+
 
         // on player disconnect
         socket.on('disconnect', function() {
